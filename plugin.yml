@@ -1,0 +1,9 @@
+name: TheAssassin
+version: 0.3
+main: com.ben.theassassin.Main
+api-version: 1.13
+authors: [UndauntedPhish]
+description: Minigame in which a rouge runaway must escape the Assassin
+commands:
+  menu:
+    description: Opens the main menu for The Assassin
