@@ -6,4 +6,4 @@ host: localhost
 port: 3306
 database: tutorial
 username: root
-password: airplane
+password: 
