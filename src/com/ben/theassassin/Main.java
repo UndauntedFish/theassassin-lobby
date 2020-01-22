@@ -63,7 +63,7 @@ public class Main extends JavaPlugin
     @Override
     public void onDisable()
     {
-        /*
+        /* Haaah
          * If there are still players' inventories stored when server shuts down,
          * restore those player's inventories before they get kicked
          */
