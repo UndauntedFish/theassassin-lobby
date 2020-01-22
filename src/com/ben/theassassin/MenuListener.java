@@ -24,7 +24,7 @@ public class MenuListener implements Listener
         this.main = main;
     }
 
-    // Gives the assassin kit to a specific player, and stores their previous inventory
+    // Gives the assassin kit to a specific player, and stores their previous inventory in the Main class's hashmap
     private void equipAssassin(Player player)
     {
         Inventory i = player.getInventory();
