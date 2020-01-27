@@ -25,6 +25,7 @@ public class Main extends JavaPlugin
 {
     public Player assassin, runaway;
     public HUD lobbyHud;
+    public static Database myDtb;
 
     @Override
     public void onEnable()
@@ -50,7 +51,7 @@ public class Main extends JavaPlugin
         lobbyHud.startTimer(this.getConfig().getDouble("time"));
         
         // MySQL Database creation
-        Database myDtb = new Database(this);
+        myDtb = new Database(this);
         
     }
     

@@ -8,11 +8,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerLeaveListener implements Listener
 {
-    private Main main;
+    private static Main main;
 
     public PlayerLeaveListener(Main main)
     {
-        this.main = main;
+        PlayerLeaveListener.main = main;
     }
 
     private void restoreInv(Player player)

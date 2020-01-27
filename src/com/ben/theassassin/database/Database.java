@@ -2,6 +2,7 @@ package com.ben.theassassin.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
@@ -11,12 +12,13 @@ import com.ben.theassassin.Main;
 
 public class Database
 {
-	private Connection connection;
+	private static Connection connection;
 	private String host, database, username, password;
 	private int port;
 	
 	public Database(Main main)
 	{
+		// Connects minecraft plugin to the database management system
 		host = main.getConfig().getString("host");
 		port = main.getConfig().getInt("port");
 		database = main.getConfig().getString("database");
@@ -47,5 +49,18 @@ public class Database
 		this.host + ":" + this.port + "/" + this.database, this.username, this.password);
 	}
 	
+	public static PreparedStatement prepareStatement(String query)
+	{
+		PreparedStatement ps = null;
+		try
+		{
+			ps = connection.prepareStatement(query);
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return ps;
+	}
 	
 }

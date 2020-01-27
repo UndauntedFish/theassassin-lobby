@@ -1,5 +1,7 @@
 package com.ben.theassassin.bossbarhud;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
@@ -9,6 +11,7 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import com.ben.theassassin.Main;
+import com.ben.theassassin.database.Database;
 
 public class HUD
 {
@@ -17,12 +20,12 @@ public class HUD
 	private BarColor barColor;
 	private BarStyle barStyle;
 	private BarFlag barFlag;
-	private Main main;
+	private static Main main;
 	
 	public HUD(Main main)
 	{
 		setBossbar(null);
-		this.main = main;
+		HUD.main = main;
 	}
 	
 	public HUD(String title, BarColor barColor, BarStyle barStyle, BarFlag barFlag, Main main)
@@ -31,7 +34,7 @@ public class HUD
 		this.setBarColor(barColor);
 		this.setBarStyle(barStyle);
 		this.setBarFlag(barFlag);
-		this.main = main;
+		HUD.main = main;
 		
 		setBossbar(Bukkit.createBossBar(title, barColor, barStyle, barFlag));
 	}
@@ -41,7 +44,7 @@ public class HUD
 		this.setTitle(title);
 		this.setBarColor(barColor);
 		this.setBarStyle(barStyle);
-		this.main = main;
+		HUD.main = main;
 		
 		setBossbar(Bukkit.createBossBar(title, barColor, barStyle));
 	}
@@ -94,6 +97,33 @@ public class HUD
 	public void setBarFlag(BarFlag barFlag)
 	{
 		this.barFlag = barFlag;
+	}
+	
+	/*
+	 * Attempts to send players the gameserver
+	 */
+	private static void sendPlayersToGame()
+	{
+		if (main.assassin == null || main.runaway == null)
+		{
+			return;
+		}
+		
+		// Load assassin and runaway into dtb
+		try 
+		{
+			Database.prepareStatement("INSERT INTO " + main.getConfig().getString("table") + "(UUID, IS_ASSASSIN, GAME_SERVER) "
+					+ "VALUES ('" + main.assassin.getUniqueId() + "', 1, " + main.assassin.getWorld().getName() + ");").executeUpdate();
+			
+			Database.prepareStatement("INSERT INTO " + main.getConfig().getString("table") + "(UUID, IS_ASSASSIN, GAME_SERVER) "
+					+ "VALUES ('" + main.runaway.getUniqueId() + "', 0, " + main.runaway.getWorld().getName() + ");").executeUpdate();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		// Transfer assassin and runaway into bungee server, then the gameserver plugin will take it from here.
+			
 	}
 
 	// Starts a 1 minute progress bar timer to the HUD
