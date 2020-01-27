@@ -34,7 +34,7 @@ public class Database
 		}
 	}
 	
-	// Opens a connection from the plugin to the database
+	// Opens a connection from the plugin to the database github test
 	private void openConnection() throws SQLException
 	{
 		// If the connection is already open, then don't attempt to open it again
