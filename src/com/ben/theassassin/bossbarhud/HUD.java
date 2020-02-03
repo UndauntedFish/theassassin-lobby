@@ -123,7 +123,10 @@ public class HUD
 		}
 		
 		// Transfer assassin and runaway into bungee server, then the gameserver plugin will take it from here.
-			
+		main.sendPlayerToServer("TASS1", main.assassin);
+		main.sendPlayerToServer("TASS1", main.runaway);
+		main.assassin = null;
+		main.runaway = null;
 	}
 
 	// Starts a 1 minute progress bar timer to the HUD
@@ -155,7 +158,7 @@ public class HUD
 						else
 						{
 							bossbar.setTitle(ChatColor.GREEN + "Starting game...");
-							// call helper function to send players to database and the gameserver
+							sendPlayersToGame();
 						}
 						
 						//+ (1.0/60.0) is 60 second timer, + (1.0/30.0) is 30 second timer, etc.
@@ -174,9 +177,9 @@ public class HUD
 					// We will cancel that attempt to set it to > 1.0, and manually set it to 1.0
 					// call helper function to send players to database and the gameserver
 					bossbar.setProgress(1.0);
+					sendPlayersToGame();
 					Bukkit.getScheduler().cancelTask(processId.get());
 				}
-				
 				
 				// Standard incrementing and stopping
 				int currentIt = currentIteration.incrementAndGet();

@@ -1,6 +1,5 @@
 package com.ben.theassassin;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,16 +11,21 @@ import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.ben.theassassin.bossbarhud.HUD;
 import com.ben.theassassin.bossbarhud.PlayerJoinListener;
 import com.ben.theassassin.database.Database;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
-public class Main extends JavaPlugin
+public class Main extends JavaPlugin implements Listener, PluginMessageListener
 {
     public Player assassin, runaway;
     public HUD lobbyHud;
@@ -40,6 +44,13 @@ public class Main extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(new MenuListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        
+        // Bungee Setup
+        Bukkit.getServer().getPluginManager().registerEvents(this, this);
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+        
+        
         
         // Lobby HUD Timer creation
         lobbyHud = new HUD(
@@ -64,7 +75,7 @@ public class Main extends JavaPlugin
     @Override
     public void onDisable()
     {
-        /* Haaah
+        /* 
          * If there are still players' inventories stored when server shuts down,
          * restore those player's inventories before they get kicked
          */
@@ -81,6 +92,27 @@ public class Main extends JavaPlugin
         }
 
         System.out.println("[TheAssassin] Successfully disabled.");
+    }
+    
+    // Bungee Setup
+    public void onPluginMessageReceived(String channel, Player player, byte[] message)
+    {
+    	if (!channel.equals("BungeeCord"))
+    	{
+    		return;
+    	}
+    	
+    	ByteArrayDataInput in = ByteStreams.newDataInput(message);
+    	String subchannel = in.readUTF();
+    }
+    
+    // Sends a specified player to the server. Used by HUD class to send the assassin and runaway to the gameserver
+    public void sendPlayerToServer(String serverName, Player player)
+    {
+    	ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    	out.writeUTF("Connect");
+    	out.writeUTF(serverName);
+    	player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
     }
 
     public HashMap<Player, ItemStack[]> tempInv = new HashMap<>();
